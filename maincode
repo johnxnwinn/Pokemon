@@ -1,0 +1,602 @@
+import time
+from colorama import Fore, Style
+import random
+import math
+#import for time and colored text and others
+def scrolling_text(msg, n_chars):
+    len_msg = len(msg)
+    counter = 0
+    time_cut = 0
+    print(Fore.RED + "⬇")
+    time.sleep(2)
+    while time_cut != 35:
+        displayed = ""
+        for char in range(n_chars):
+            displayed += msg[(counter + char) % len_msg]
+        print(f"\r{displayed}", end="")
+        time.sleep(0.08)
+        counter = (counter + 1) % len_msg
+        time_cut += 1
+    return
+#loading screen text whenever its loading
+level = 4
+health = 0
+opp = ''
+moveset = ''
+opp_health = 0
+opp_level = 0
+exp = 0
+exp_level = 150
+exp_opp = 0
+attack = ''
+damage = 0
+base_damage = 0
+opp_damage = 0
+attack_l = ''
+opp_trainer = ''
+rand_attack = 0
+battle_T = "false"
+#variables that you use thruout the game
+starter = ["bulbasaur", "charmander", "squirtle"]
+choices = ["train", "battle", "gym leader", "quit"]
+opp_moves = ["Tackle", "Cut", "Body Slam", "Quick Attack", "Slam", "Secret Power", "Hyper Fang"]
+b_moves = ["tackle", "vine whip", "seed bomb"]
+c_moves = ["tackle", "ember", "flame blast"]
+s_moves = ["tackle", "water Gun", "hydro pump"]
+chosen = ""
+train_1 = ["Zigazagoon","Caterpie","Pidgey","Rattata", "Weedle", "Pikachu"]
+train_6 = ["Geodude", "Jigglypuff", "Mankey", "Nidoran", "Spearow"]
+train_11 = ["Paras", "Machop", "Cubone", "Bellsprout", "Zubat"]
+train_20 = ["Onix", "Gyarados", "Growlithe", "Pidgeotto"]
+battle_1 = ["Kaleb", "Autumn", "Ben", "Jessica", "Aidan"]
+battle_6 = ["Rick", "Trevor", "Olivia", "Lauren", "Nathan", "Katlyn"]
+battle_11 = ["Ivan", "Veronica", "Peter", "Tony", "Sonia", "Hope"]
+battle_20 = ["Matthew", "Lisa", "Michael", "Jamie", "Nick", "Travis"]
+#lists that hold possible user inputs
+time.sleep(2)
+print("Prof.Oak: Welcome to Pokemon! Ready to play? Lets go!")
+time.sleep(1.5)
+scrolling_text("LOADING... ", 25)
+print(Style.RESET_ALL + "\n⬇")
+time.sleep(1.5)
+print("Prof.Oak: Hello there, My name is Professor Oak.")
+time.sleep(2)
+print("Prof.Oak: What is your name?")
+time.sleep(2.5)
+trainer = str(input(Fore.GREEN + "➤ Trainer Name: " + Style.RESET_ALL))
+trainer = ("Trainer " + trainer)
+time.sleep(1)
+print("Prof.Oak: Nice to meet you,", trainer + "!")
+time.sleep(1.5)
+print("Prof.Oak: In this mini-game, you'll try your best to beat the Poke-Gym's leader when you reach level 20!")
+time.sleep(3)
+print("Prof.Oak: As you battle more and more, you'll gain "+ Fore.BLUE + "EXP", Style.RESET_ALL +
+      "and level up your Pokemon!")
+time.sleep(4.5)
+print("Prof.Oak: Now let's see...")
+time.sleep(1.2)
+print("\nProf.Oak: What Pokemon would you like to pick?: ")
+print(Fore.GREEN + "Bulbasaur",Fore.WHITE + "|", Fore.RED + "Charmander", Fore.WHITE + "|", Fore.BLUE + "Squirtle", Style.RESET_ALL)
+p_input = str(input(Fore.MAGENTA + "➤ Pokemon: " + Style.RESET_ALL))
+pokemon = p_input.lower()
+#menu for the player to get their pokemon and learn the goal of the game
+while True:
+    if pokemon not in starter:
+        print(Style.RESET_ALL)
+        print("Prof.Oak: That's not a choice, What Pokemon would you like to pick?: ")
+        print(Fore.LIGHTGREEN_EX + "Bulbasaur",Fore.WHITE + "|", Fore.RED + "Charmander", Fore.WHITE + "|", Fore.BLUE + "Squirtle", Style.RESET_ALL)
+        p_input = str(input(Fore.MAGENTA + "➤ Pokemon: " + Style.RESET_ALL))
+        pokemon = p_input.lower()
+    else:
+        break
+#checks to make sure that the pokemon input is one of the choices
+time.sleep(1.7)
+if pokemon == starter[0]:
+    print("Prof.Oak: Ah, yes Bulbasaur! Good choice!")
+    time.sleep(2)
+    print("Prof.Oak: Bulbasaur is a grass-type Pokemon with "
+          "high health but lower attack, be sure to use its strengths!")
+    time.sleep(3)
+    base_health = 200
+    pokemon = "Bulbasaur"
+    chosen = b_moves
+    moveset = moveset + b_moves[0]
+elif pokemon == starter[1]:
+    print("Prof.Oak: Ah yes, Charmander! Good choice!")
+    time.sleep(2)
+    print("Prof.Oak: Charmander is a fire-type Pokemon with "
+          "high attack but lower health, be sure to use its strengths!")
+    time.sleep(3)
+    base_health = 150
+    pokemon = "Charmander"
+    chosen = c_moves
+    moveset = moveset + c_moves[0]
+else:
+    print("Prof.Oak: Ah yes, Squirtle! Good choice!")
+    time.sleep(2)
+    print("Prof.Oak: Squirtle is a water-type Pokemon with "
+          "fair health and fair attack, be sure to use its strengths!")
+    time.sleep(3)
+    base_health = 175
+    pokemon = "Squirtle"
+    chosen = s_moves
+    moveset = moveset + s_moves[0]
+
+time.sleep(1.5)
+print("Prof.Oak: With your new Pokemon you can train by either battling wild Pokemon or battling other trainers!")
+time.sleep(4.5)
+print("Prof.Oak: When you're ready to challenge the Poke-gym, go ahead and get your gym badge!")
+time.sleep(3.5)
+print("Prof.Oak: Alright, alright, I'll get out of your hair for now. HAVE FUN!")
+scrolling_text("LOADING... ", 25)
+print(Style.RESET_ALL + "\n⬇")
+#picking the pokemon and prof.oak explaining the game some more
+#below are functions for the gameplay such as the levels and the atacking and the opponent choosing
+
+
+def levelup():
+    global exp, exp_level, level, moveset, base_health, damage, base_damage
+    while True:
+        if exp >= exp_level:
+            exp_level = exp_level + exp_level/2
+            level += 1
+            print(pokemon,"grew to level", level)
+            time.sleep(1.5)
+            base_health = math.ceil(base_health + base_health/10)
+            print("Health increased to", Fore.GREEN + str(base_health), Style.RESET_ALL)
+            time.sleep(1.5)
+            base_damage += 5
+            print("Damage increased by" + Fore.RED + " +5", Style.RESET_ALL)
+            time.sleep(1.5)
+            exp = exp - exp_level
+            if level == 5:
+                print(pokemon, "learned", Fore.BLUE + chosen[1].upper(), Style.RESET_ALL)
+                moveset = moveset + " | " + chosen[1].upper()
+                time.sleep(2)
+                continue
+            elif level == 15:
+                print(pokemon, "learned", chosen[2].upper())
+                moveset = moveset + " | " + chosen[2].upper()
+                time.sleep(2)
+                continue
+            else:
+                continue
+        else:
+            break
+
+
+def opponent(lvl):
+    global opp, opp_level, opp_health, exp_opp, opp_damage, opp_trainer
+    if 5 >= lvl >= 1:
+        opp_trainer = random.choice(battle_1)
+        opp = random.choice(train_1)
+        opp_level = random.randint(1, 5)
+        opp_health = random.randint(75, 125)
+        exp_opp = random.randint(100,150)
+        opp_damage = random.randint(25, 35)
+    elif 10 >= lvl >= 6:
+        opp_trainer = random.choice(battle_6)
+        opp = random.choice(train_6)
+        opp_level = random.randint(6, 10)
+        opp_health = random.randint(175, 250)
+        exp_opp = random.randint(175, 250)
+        opp_damage = random.randint(50, 85)
+    elif 15 >= lvl >= 11:
+        opp_trainer = random.choice(battle_11)
+        opp = random.choice(train_11)
+        opp_level = random.randint(11, 15)
+        opp_health = random.randint(300, 350)
+        exp_opp = random.randint(300, 400)
+        opp_damage = random.randint(100, 125)
+    else:
+        opp_trainer = random.choice(battle_20)
+        opp = random.choice(train_20)
+        opp_level = random.randint(16, 20)
+        opp_health = random.randint(350, 400)
+        exp_opp = random.randint(400, 500)
+        opp_damage = random.randint(125, 145)
+
+
+def attack1(var):
+    global damage, rand_attack, pokemon,opp_damage, opp_health, battle_T
+    rand_attack = random.randint(0,12)
+    if rand_attack == 3 or rand_attack == 8:
+        damage = 0
+        print(opp, "dodged", attack + "!")
+    elif rand_attack == 12 and battle_T == "true":
+        opp_health += 25
+        print(opp_trainer, "gave", opp, "a Potion! HP restored +25")
+        print(Fore.BLUE + "+25" + Style.RESET_ALL)
+        if pokemon == "Bulbasaur":
+            if var == chosen[0]:
+                damage = base_damage + 35
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[1]:
+                damage = base_damage + 75
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[2]:
+                damage = base_damage + 100
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        elif pokemon == "Charmander":
+            if var == chosen[0]:
+                damage = base_damage + 55
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[1]:
+                damage = base_damage + 100
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[2]:
+                damage = base_damage + 130
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        elif pokemon == "Squirtle":
+            if var == chosen[0]:
+                damage = base_damage + 45
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[1]:
+                damage = base_damage + 85
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[2]:
+                damage = base_damage + 115
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+    elif rand_attack == 2 and opp == "Rapidash":
+        opp_damage += 25
+        print("Gym Leader Vihaan gave Rapidash a SP Attack! Its attack rose!")
+    elif rand_attack == 5:
+        if pokemon == "Bulbasaur":
+            if var == chosen[0]:
+                damage = base_damage + 50
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            elif var == chosen[1]:
+                damage = base_damage + 95
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            elif var == chosen[2]:
+                damage = base_damage + 120
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        elif pokemon == "Charmander":
+            if var == chosen[0]:
+                damage = base_damage + 85
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            elif var == chosen[1]:
+                damage = base_damage + 120
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            elif var == chosen[2]:
+                damage = base_damage + 165
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        elif pokemon == "Squirtle":
+            if var == chosen[0]:
+                damage = base_damage + 75
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            elif var == chosen[1]:
+                damage = base_damage + 105
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            elif var == chosen[2]:
+                damage = base_damage + 125
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+                time.sleep(1)
+                print("It was a critical hit!")
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        else:
+            return
+    else:
+        if pokemon == "Bulbasaur":
+            if var == chosen[0]:
+                damage = base_damage + 35
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[1]:
+                damage = base_damage + 75
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[2]:
+                damage = base_damage + 100
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        elif pokemon == "Charmander":
+            if var == chosen[0]:
+                damage = base_damage + 55
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[1]:
+                damage = base_damage + 100
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[2]:
+                damage = base_damage + 130
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        elif pokemon == "Squirtle":
+            if var == chosen[0]:
+                damage = base_damage + 45
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[1]:
+                damage = base_damage + 85
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            elif var == chosen[2]:
+                damage = base_damage + 115
+                print(pokemon, "used", attack + "!")
+                print(Fore.RED + "-" + str(damage), Style.RESET_ALL)
+            else:
+                damage = 0
+                print("Not a move!",pokemon,"didn't know what to do and missed!")
+        else:
+            return
+
+
+def train():
+    global level, exp, attack, damage, health, opp_health, attack_l, battle_T
+    battle_T = "false"
+    opponent(level)
+    print("A wild", opp, "appeared!")
+    time.sleep(1.5)
+    print(trainer + ": Go", pokemon + "!")
+    print(trainer, "sent out", pokemon)
+    while health > 0 or opp_health > 0:
+        time.sleep(2.5)
+        print("\n"+ opp)
+        print("Level:", opp_level)
+        print("Health:", opp_health)
+        time.sleep(2.5)
+        print("\n"+ pokemon)
+        print("Level:", level)
+        print("Health:", health)
+        time.sleep(2.5)
+        print("\nWhat will you do?")
+        print(moveset.upper(), "| RUN")
+        attack = str(input(Fore.MAGENTA + "➤ Which move?: " + Style.RESET_ALL))
+        attack_l = attack.lower()
+        if attack_l == "run":
+            break
+        attack1(attack_l)
+        time.sleep(1.5)
+        opp_health = opp_health - damage
+        if health <= 0 or opp_health <= 0:
+            break
+        time.sleep(1.5)
+        print(opp, "used", random.choice(opp_moves)+"!")
+        time.sleep(.8)
+        print(Fore.RED + "-" + str(opp_damage), Style.RESET_ALL)
+        health = health - opp_damage
+        time.sleep(1.5)
+        if health <= 0 or opp_health <= 0:
+            break
+    if attack_l == "run":
+        print("Got away safely!")
+        scrolling_text("LOADING... ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+    elif health <= 0:
+        print("Oh no!", pokemon,"fainted!")
+        scrolling_text("REVIVING YOUR POKEMON ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+    else:
+        time.sleep(2)
+        print(opp,"fainted")
+        print("You won!", pokemon, "got",Fore.BLUE + str(exp_opp), "EXP pts", Style.RESET_ALL)
+        exp = exp + exp_opp
+        levelup()
+        scrolling_text("LOADING... ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+#function to train against wild pokemon
+
+def battle():
+    global level, exp, attack, damage, health, opp_health, attack_l, opp_trainer, battle_T
+    battle_T = "true"
+    opponent(level)
+    print("Trainer", opp_trainer, "challenged you to a battle!")
+    time.sleep(2)
+    print("Trainer", opp_trainer, "sent out", opp)
+    time.sleep(1.5)
+    print(trainer + ": Go", pokemon + "!")
+    print(trainer, "sent out", pokemon)
+    while health > 0 or opp_health > 0:
+        time.sleep(2.5)
+        print("\n" + opp)
+        print("Level:", opp_level)
+        print("Health:", opp_health)
+        time.sleep(2.5)
+        print("\n" + pokemon)
+        print("Level:", level)
+        print("Health:", health)
+        time.sleep(2.5)
+        print("\nWhat will you do?")
+        print(moveset.upper())
+        attack = str(input(Fore.MAGENTA + "➤ Which move?: " + Style.RESET_ALL))
+        attack_l = attack.lower()
+        attack1(attack_l)
+        time.sleep(1.5)
+        opp_health = opp_health - damage
+        if health <= 0 or opp_health <= 0:
+            break
+        time.sleep(1.5)
+        print("Trainer", opp_trainer + ":", opp, "attack!")
+        print(opp, "used", random.choice(opp_moves) + "!")
+        time.sleep(.5)
+        print(Fore.RED + "-" + str(opp_damage), Style.RESET_ALL)
+        health = health - opp_damage
+        time.sleep(1.5)
+        if health <= 0 or opp_health <= 0:
+            break
+    if health <= 0:
+        print("Oh no!", pokemon, "fainted!")
+        print(trainer,"blacked out!")
+        scrolling_text("REVIVING YOUR POKEMON ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+    else:
+        time.sleep(2)
+        print(opp, "fainted")
+        print("You won!", pokemon, "got",Fore.BLUE + str(exp_opp * 2), "EXP pts", Style.RESET_ALL)
+        exp = exp + exp_opp * 2
+        levelup()
+        print("Trainer", opp_trainer + ":", "Ah man! You're really good!")
+        scrolling_text("LOADING... ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+#function to train against other trainers
+
+def gymleader():
+    global opp_health, health, attack, attack_l, opp_damage, exp_opp,exp,opp, opp_trainer, opp_level, battle_T
+    battle_T = "true"
+    opp = "Rapidash"
+    opp_health = 650
+    opp_level = 22
+    opp_damage = 180
+    exp_opp = 10000
+    time.sleep(2.5)
+    opp_trainer = "Gym Leader Vihaan"
+    print("Gym Leader Vihaan challenged you to a battle!")
+    time.sleep(2)
+    print("Gym Leader Vihaan: This isn't going to be easy!")
+    time.sleep(2)
+    print("Gym Leader sent out Rapidash!")
+    time.sleep(1.5)
+    print(trainer + ": Go", pokemon + "!")
+    print(trainer, "sent out", pokemon)
+    while health > 0 or opp_health > 0:
+        time.sleep(2.5)
+        print("\nRapidash")
+        print("Level:", opp_level)
+        print("Health:", opp_health)
+        time.sleep(2.5)
+        print("\n" + pokemon)
+        print("Level:", level)
+        print("Health:", health)
+        time.sleep(2.5)
+        print("\nWhat will you do?")
+        print(moveset.upper())
+        attack = str(input(Fore.MAGENTA + "➤ Which move?: " + Style.RESET_ALL))
+        attack_l = attack.lower()
+        attack1(attack_l)
+        time.sleep(1.5)
+        opp_health = opp_health - damage
+        if health <= 0 or opp_health <= 0:
+            break
+        time.sleep(1.5)
+        print("Gym Leader Vihaan: Rapidash use Flamethrower!")
+        time.sleep(1.2)
+        print("Rapidash used Flamethrower!")
+        print(Fore.RED + "-" + str(opp_damage), Style.RESET_ALL)
+        health = health - opp_damage
+        time.sleep(1.5)
+        if health <= 0 or opp_health <= 0:
+            break
+    if health <= 0:
+        print("Oh no!", pokemon, "fainted!")
+        print(trainer, "blacked out!")
+        time.sleep(2.5)
+        print("Prof.Oak: Try training some more, and when you get stronger, come back and WIN!")
+        scrolling_text("REVIVING YOUR POKEMON ", 35)
+        print(Style.RESET_ALL + "\n⬇")
+    else:
+        time.sleep(2)
+        print("Rapidash fainted!")
+        print("You won!", pokemon, "got",Fore.BLUE + str(exp_opp), "EXP pts", Style.RESET_ALL)
+        exp = exp + exp_opp
+        levelup()
+        print("Gym Leader Vihaan: Good job! Here's your badge!")
+        print(trainer, "received Gym badge.")
+        print("Gym Leader Vihaan: Nice, now go finish your journey to becoming the greatest Pokemon master!")
+        scrolling_text("LOADING... ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+#fucntion to battle the gym leader
+#run this code until the player reaches level 20, they get the chance to train and battle players
+
+while level < 20:
+    health = base_health
+    time.sleep(2.5)
+    print("What would you like to do?")
+    time.sleep(1.5)
+    print(Fore.YELLOW + "Train", Fore.WHITE + "|", Fore.MAGENTA + "Battle", Fore.WHITE + "|", Fore.RED + "Gym Leader",
+          Fore.WHITE + "|", Fore.BLACK + "Quit", Style.RESET_ALL)
+    d_input = str(input(Fore.MAGENTA + "➤ Which action?: " + Style.RESET_ALL))
+    action = d_input.lower()
+    while True:
+        if action not in choices:
+            print(Style.RESET_ALL)
+            print("That's not a choice, What would you like to do?")
+            print(Fore.YELLOW + "Train", Fore.WHITE + "|", Fore.MAGENTA + "Battle", Fore.WHITE + "|",
+                  Fore.BLACK + "Quit",
+                  Style.RESET_ALL)
+            d_input = str(input(Fore.MAGENTA + "➤ Which action?: " + Style.RESET_ALL))
+            action = d_input.lower()
+        else:
+            break
+    if action == choices[0]:
+        print(trainer + ": Let's Train!")
+        scrolling_text("WALKING THRU GRASS... ", 35)
+        print(Style.RESET_ALL + "\n⬇")
+        train()
+    elif action == choices[1]:
+        print(trainer + ": Let's Battle!")
+        scrolling_text("FINDING CHALLENGERS... ", 35)
+        print(Style.RESET_ALL + "\n⬇")
+        battle()
+    elif action == choices[2]:
+        print(trainer + ": Let's get our badge!")
+        scrolling_text("LOADING... ", 25)
+        print(Style.RESET_ALL + "\n⬇")
+        gymleader()
+    else:
+        print("Thanks for playing! We'll see you soon!")
+        exit()
+#once level hits 20 forced to go against gymleader, win or lose the game ends.
+print("Prof.Oak: Woah there", trainer, "! It looks like you're strong enough to challenge the gym leader!")
+scrolling_text("LOADING... ", 25)
+print(Style.RESET_ALL + "\n⬇")
+gymleader()
+"Thank you for playing this game."
